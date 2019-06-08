@@ -41,7 +41,7 @@ numFiles = 0
 numSentences = 0
 numArticles = 0
 
-entity_index = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
+entity_index = defaultdict(list)
 columns = ["entity", "type", "publisher", "author", "article", "line"]
 rows = list()
 
@@ -65,7 +65,7 @@ for file in name_part:
     numFiles+=1
     for record in range(0, records):
         numArticles+=1        
-        if(numArticles > 50):
+        if(numArticles > 25):
             break
         publisher = df.at[record, 
                           "publication"]
@@ -83,12 +83,12 @@ for file in name_part:
                     rows.append([entity[0], entity[1], 
                                 publisher, author, article, 
                                 line_number])
-                    entity_index[(entity[0], entity[1], publisher)].append([author, article, line_number])
+                    entity_index[(entity[0], entity[1], publisher, author, article)].append(line_number)
                 
 concordance = pd.DataFrame(rows, columns=columns)
 print("Total entities: %d" % concordance.shape[0])
 nlp.close()
-print(concordance) 
+print(entity_index) 
 file_name = filePath + "/concordance.csv"
 concordance.to_csv(path_or_buf=file_name, header=None, index=None)
  
